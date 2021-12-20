@@ -1,4 +1,5 @@
 import fetch from 'node-fetch'; 
+import resHandler from '../util/resHandler'; 
 //const appintmenturl = 'https://dummy.restapiexample.com/api/v1/create'; 
 const appintmenturl =  'http://localhost:8080/api/addappointment';
 const CreateAppointment = async(appointment) => {
@@ -14,16 +15,17 @@ const CreateAppointment = async(appointment) => {
         //{"name":"test","salary":"123","age":"23"}
     }).then( (response) => 
     {
+        
       resStatus = response.status; 
       return  response; 
-       
+  
     })
     .catch((error)=> {
         console.log(error);
         return error; 
     })
 
-    return response; 
+    return await resHandler(response) ; 
 }
 
 const appintmentService = {

@@ -1,7 +1,6 @@
 import errorHandler from'../util/errorHandler'; 
 const resHandler = async (res) => {
     const response = await res.json(); 
-    console.log(response)
     if (res.status === 200 )
     {
         return{
@@ -18,9 +17,7 @@ const resHandler = async (res) => {
             message:{
                 url:res.url,
                 message: response
-            },
-           
-    }; 
+            },}; 
     }
   //  throw new console.error();
 }
