@@ -1,3 +1,4 @@
+import logger from'../util/Logger'; 
 export default (error, req,res,next) => {
     try{
         const status = error.status || 500; 
@@ -12,7 +13,7 @@ export default (error, req,res,next) => {
 
     }catch(ex)
     {
-        console.log(ex.stack.split("\n"))
+        logger.error(ex.stack.split("\n"))
         next(ex); 
        
     }

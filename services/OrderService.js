@@ -1,30 +1,32 @@
 import OrderModel from "../Model/Order";  
 import {httpStatusCodes} from '../util/httpStatusCodes';  
-import errorHandler from "../util/errorHandler";
-import resHandler from '../util/resHandler'
-import appintmentService from'../services/AppointmentService'
+import resHandler from '../util/resHandler'; 
+import formatResponse from '../util/FormatResponse'; 
+import appintmentService from'../services/AppointmentService'; 
+import logger from'../util/Logger'; 
 
 //https://www.cuelogic.com/blog/microservices-with-node-js
+
  const createOrderService = async (createorderdata) =>{
       
     const {appointment, orderId} = createorderdata; 
     const isOrdervalid = await OrderModel.findOne({'orderId':orderId}); 
     if (isOrdervalid)
     {
-        return {code:httpStatusCodes.NOT_FOUND, message:`order id already exist  +${orderId}`}; 
+        logger.error('order id already exist'+ orderId); 
+        return {code:httpStatusCodes.BAD_REQUEST, message:{'errors':`order id already exist+${orderId}`}}; 
     }
     
     let appointmentresponse = await appintmentService.CreateAppointment(appointment);
   
-    let testreposnse = await resHandler(appointmentresponse); 
-    if (!(testreposnse.code == 200))
-    {  
-                                                                                                                                                                             
-      return testreposnse; 
+    
+    if (!(appointmentresponse.code === 200))
+    {   
+        logger.error('appoint service failed'+ orderId);                                                                                                                                                                     
+      return appointmentresponse; 
     }
-    const id = testreposnse.Id; 
-    const orderschemer = orderMap(createorderdata,id ); 
- 
+
+    const orderschemer = orderMap(createorderdata, appointmentresponse.Id); 
     
     const result = await orderschemer.save(); 
 
@@ -32,6 +34,7 @@ import appintmentService from'../services/AppointmentService'
   
     return {code:200, message:{orderId,name}};        
 }
+
 const getanOrderService = async(orderId) => {
   
     return new Promise((resolve)=> 
@@ -40,20 +43,37 @@ const getanOrderService = async(orderId) => {
         .then((order) => {
             if (!order)
             {
-                console.log('user doesnt exist'+ order); 
+                logger.error('order  doesnt exist'+ orderId); 
                 return resolve({code:httpStatusCodes.NOT_FOUND, errors:{message:`user doesn't exist with this +${orderId}`, location:'id'}}); 
             }
             else{
-              return resolve (order); 
+                 const formattedResponse = formatResponse(order);  
+                 return resolve(formattedResponse); 
             }
         })
 
     })
 
 }
-
-function orderMap(request, id)
-{
+const getallorder = async () => {
+  const result = await OrderModel.find ({}, function(er, result )
+    {
+        if (er)
+        {
+            logger.error('user doesnt exist'+ er.message); 
+            return er; 
+        }
+        else{
+        
+            return result; 
+        }
+    }).clone(); 
+    
+    const response = result.map((data)=>{
+        return formatResponse(data);}) 
+        return response; 
+}
+function orderMap(request, id){
    const{orderId, appointment, Coredetails, Subtotal, Fees, Cinemaname, discountAmount,isDiscount} = request; 
         return  new  OrderModel({
        orderId : orderId, 
@@ -77,7 +97,7 @@ function orderMap(request, id)
             phone:parseInt(Coredetails.phone)    
         }, 
         Orderstatus:"pending", 
-        Total:0.0
+        Total:Subtotal
 
     })
 }
@@ -86,7 +106,8 @@ function orderMap(request, id)
 
 const orderservice = {
     createOrderService, 
-    getanOrderService
+    getanOrderService, 
+    getallorder
 }
 
 

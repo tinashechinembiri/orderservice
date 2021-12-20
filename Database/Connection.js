@@ -1,4 +1,5 @@
 import  mongoose  from "mongoose";
+import logger from'../util/Logger'; 
 //https://github.com/akashyap2013/CRUD_Application_Node/blob/master/server/database/connection.js
 //https://blog.logrocket.com/design-patterns-in-node-js/
 let instance = null; 
@@ -9,16 +10,14 @@ export default class dbclass {
         this.properties = props; 
         this._conn = null; 
     }
-
     connect = async()=>{
         try{
         this._conn = await mongoose.connect('mongodb+srv://tchine1:password01@cluster0.vjyux.mongodb.net/Test_appointment?retryWrites=true&w=majority',{ useNewUrlParser: true, useUnifiedTopology: true }); 
-        console.log(`mongodb connected :${this.conn.connection.host}`)
+        logger.info(`mongodb connected :${this.conn.connection.host}`); 
         }catch(err){
-            console.log(err);
+            logger.error('database failed '+ err); 
             return err;  
         }
-
     }
 
     get conn(){

@@ -1,72 +1,49 @@
 import errorHandler  from"../util/errorHandler"; 
 import {httpStatusCodes} from '../util/httpStatusCodes';  
 import orderservice from '../services/OrderService'; 
-import { response } from "express";
+import logger from'../util/Logger'; 
 import middlewareasync from "../middleware/async"
-export const createOrder = middlewareasync(  async(req, res, next) =>{
-    // appointment got to supplied on appointment service 
-    //console.log(req.body); 
+import customerserviceclass from "../services/ServiceClass/CustomerOrderService";
+export const CreateOrder = middlewareasync( async(req, res, next) =>{
     const requestData = req.body; 
-    const {orderId,appointment,  } = req.body;
+    const {orderId,appointment} = req.body;
      
     if(!orderId || !appointment || !requestData)
     {
+        logger.error(`code:${httpStatusCodes.BAD_REQUEST}, message:The payload is missing some data`)
         return errorHandler(
             {
                 status:httpStatusCodes.BAD_REQUEST,
                 message:'The payload is missing some data',
-                location:'payload'
-            }, 
+                location:'payload'}, 
             req,
             res,
             next); 
     }
+
     const response = await orderservice.createOrderService(requestData)   
-    res.status(response.code).json(response.message); 
+    res.status(response.code).json(response); 
 }); 
 
 
-export const cancelOrder = async (req, res, next) => 
-{
+export const CancelOrder = async (req, res, next) => {
     console.log("works");
 }
-export const getsingleorder = (req,res, next) => 
-{
-    /* id got be string
-        got to load order data and use appintment id to collect the appointment 
-        go
-
-    */
+export const GetSingleOrder = middlewareasync( async (req,res, next) => {
  const{  id:orderid} = req.params; 
+const orders = new customerserviceclass(); 
+ const order = await orders.GetSingleOrder(orderid)
+ const response = order.message; 
+ res.status(order.code).json(response)
 
-  return orderservice
-  .getanOrderService(orderid)
-    .then((response) => {
-        if(response?.errors)
-        {
-          
-            return errorHandler(
-                {
-                    status:response.code,
-                    message:response.errors.message,
-                    location:response.errors.location
-                }, 
-                req,
-                res,
-                next);
-        };
-        res.status(200).json(response);    
-    })
-    .catch((ex)=>{
-        console.log(ex.stack.split("\n"))
-        next(ex); 
-    })
-}
-export const getallorder = (req, res, next) => 
-{
-    
-    console.log("works")
-}
+
+})
+export const GetAllOrder = middlewareasync( async (req, res, next) => {
+    //const order =  await orderservice.getallorder(); 
+    const orders = new customerserviceclass(orderservice)
+    const order = await orders.getallorder()
+    res.status(200).json(order)
+}); 
 
 
 
