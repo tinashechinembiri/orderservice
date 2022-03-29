@@ -1,44 +1,61 @@
 {
   "name": "orderservice",
   "version": "1.0.0",
-  "description": "",
   "main": "App.js",
-  "type": "module",
   "scripts": {
-    "test": "mocha --reporter spec  --experimental-modules --es-module-specifier-resolution=node",
-    "start": "nodemon --experimental-modules --es-module-specifier-resolution=node App.js"
+    "start": "babel-node Index -L",
+    "dev": "nodemon --exec npm start",
+    "test": "node  --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test:watch": "npm run test -- --watch"
+  },
+  "jest": {
+    "transform": {}
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@bundled-es-modules/chai": "^4.2.2",
+    "aws-sdk": "^2.1101.0",
     "axios": "^0.24.0",
-    "config": "^3.3.6",
+    "config": "^3.3.7",
+    "cross-fetch": "^3.1.5",
     "dotenv": "^10.0.0",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "fetch": "^1.1.0",
     "if-env": "^1.0.4",
     "joi": "^17.4.2",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.0.13",
     "morgan": "^1.10.0",
-    "node-fetch": "^3.1.0",
+    "node-fetch": "^3.2.3",
+    "nodemon": "^2.0.15",
     "underscore": "^1.13.1",
     "winston": "^3.3.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.16.0",
-    "@babel/node": "^7.16.0",
-    "@babel/preset-env": "^7.16.4",
+    "@babel/cli": "^7.17.6",
+    "@babel/core": "^7.17.8",
+    "@babel/node": "^7.16.8",
+    "@babel/plugin-transform-runtime": "^7.17.0",
+    "@babel/preset-env": "^7.16.11",
     "chai": "^4.3.4",
     "chai-as-promised": "^7.1.1",
     "jest": "^27.4.4",
     "jshint": "^2.13.1",
     "mocha": "^9.1.3",
-    "nodemon": "^2.0.15",
     "rewire": "^5.0.0",
     "sinon": "^12.0.1",
     "sinon-chai": "^3.7.0",
     "supertest": "^6.1.6"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tinashechinembiri/orderservice.git"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/tinashechinembiri/orderservice/issues"
+  },
+  "homepage": "https://github.com/tinashechinembiri/orderservice#readme",
+  "description": ""
 }
