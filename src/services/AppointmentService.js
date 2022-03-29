@@ -46,7 +46,7 @@ const awsSnstoappointment = (appointment) => {
     const sns = new AWS.SNS({apiVersion: "2010-03-31"})
     var params = {
         Message:appointment.orderId,
-        TopicArn:'arn:aws:sns:eu-west-1:393746391337:create_user_topic'
+        TopicArn:''
     }
     let publishtextpromise = sns.publish (params).promise(); 
     publishtextpromise.then ( (data) => {
